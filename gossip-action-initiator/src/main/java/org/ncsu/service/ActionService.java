@@ -36,7 +36,8 @@ public class ActionService {
                 if(action == Action.KILL) {
                     response = nodeManagerService.killNode(actionRecord.getActionPort());
                 } else {
-                    response = nodeManagerService.startNode(actionRecord.getActionPort());
+                    response = nodeManagerService.startNode(actionRecord.getActionPort(), actionRecord.getPeer(),
+                            actionRecord.getKafkaBroker(), actionRecord.getTopic());
                 }
 
                 if (response.getStatus() != Response.Status.OK.getStatusCode()) {

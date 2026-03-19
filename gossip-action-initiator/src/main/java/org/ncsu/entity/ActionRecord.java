@@ -11,6 +11,9 @@ public class ActionRecord extends PanacheEntity {
     String nodeAddress;
     Integer managerPort;
     Integer actionPort;
+    String peer;
+    String kafkaBroker;
+    String topic;
     Integer status;
     LocalDateTime timestamp;
     Action action;
@@ -76,5 +79,29 @@ public class ActionRecord extends PanacheEntity {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public String getPeer() {
+        return peer;
+    }
+
+    public void setPeer(String peer) {
+        this.peer = peer;
+    }
+
+    public String getKafkaBroker() {
+        return kafkaBroker;
+    }
+
+    public void setKafkaBroker(String kafkaBroker) {
+        this.kafkaBroker = kafkaBroker;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
     }
 }
