@@ -1,5 +1,4 @@
 org/ncsu/entity/GossipRecord.class
-org/ncsu/ExampleResource.class
 org/ncsu/GossipEventConsumer$1.class
 org/ncsu/service/GossipRecordService.class
 org/ncsu/entity/GossipDigest.class

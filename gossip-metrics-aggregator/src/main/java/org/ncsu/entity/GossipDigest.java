@@ -4,24 +4,24 @@ import java.time.LocalDateTime;
 
 public class GossipDigest {
 
-    Integer generation;
+    Long generation;
     Integer version;
     LocalDateTime timestamp;
     Boolean isAlive;
 
     public GossipDigest()  {}
 
-    public GossipDigest(Integer generation, Integer version, LocalDateTime timestamp, Boolean isAlive) {
+    public GossipDigest(Long generation, Integer version, LocalDateTime timestamp, Boolean isAlive) {
         this.generation = generation;
         this.version = version;
         this.timestamp = timestamp;
         this.isAlive = isAlive;
     }
 
-    public int getGeneration() {
+    public Long getGeneration() {
         return generation;
     }
-    public void setGeneration(Integer generation) {
+    public void setGeneration(Long generation) {
         this.generation = generation;
     }
 

@@ -11,6 +11,14 @@
             </ModuleState>
           </value>
         </entry>
+        <entry key="gossip-metrics-aggregator">
+          <value>
+            <ModuleState>
+              <option name="hash" value="-1265362096" />
+              <option name="version" value="1" />
+            </ModuleState>
+          </value>
+        </entry>
       </map>
     </option>
   </component>

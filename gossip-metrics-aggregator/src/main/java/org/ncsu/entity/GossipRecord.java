@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class GossipRecord extends PanacheEntity {
 
     String nodeAddress;
-    Integer generation;
+    Long generation;
     Integer version;
     LocalDateTime timestamp;
     Boolean isAlive;

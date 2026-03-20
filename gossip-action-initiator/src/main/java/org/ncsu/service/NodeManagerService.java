@@ -7,16 +7,20 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import jakarta.ws.rs.Path;
 
+import java.util.List;
+
 @Path("/action")
 @RegisterRestClient
 public interface NodeManagerService {
 
     @POST
     @Path("/start")
-    Response startNode(@HeaderParam("action-port") Integer actionPort,
-                       @HeaderParam("peer") String peer,
+    Response startNode(@HeaderParam("address") String address,
+                       @HeaderParam("port") Integer actionPort,
+                       @HeaderParam("peers") List<String> peers,
+                       @HeaderParam("kafka-broker") String kafkaBroker,
                        @HeaderParam("kafka-topic") String kafkaTopic,
-                       @HeaderParam("kafka-broker") String kafkaBroker);
+                       @HeaderParam("strategy") String strategy);
 
     @POST
     @Path("/start")

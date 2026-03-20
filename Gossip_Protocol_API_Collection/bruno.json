@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Gossip_Protocol_API_Collection",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

@@ -1,5 +1,8 @@
 package org.ncsu;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.HeaderParam;
@@ -8,50 +11,74 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.jboss.logging.Logger;
 import org.ncsu.service.GossipProcessManager;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
-@Path("/gossip")
+@Path("/action")
+@ApplicationScoped
 public class NodeManagerResource {
 
     // Inject the process manager service we created above
     @Inject
     GossipProcessManager processManager;
 
+    private static final Logger LOG = Logger.getLogger(NodeManagerResource.class);
+
+    ObjectMapper mapper = new ObjectMapper();
+
     @POST
     @Path("/start")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response start(
+            @HeaderParam("address") String address,
             @HeaderParam("port") Integer port,
-            @HeaderParam("peer") String peer,
+            @HeaderParam("peers") List<String> peers,
             @HeaderParam("kafka-topic") String kafkaTopic,
-            @HeaderParam("kafka-broker") String kafkaBroker
-    ) {
+            @HeaderParam("kafka-broker") String kafkaBroker,
+            @HeaderParam("strategy") String strategy
+    ) throws JsonProcessingException {
+
+        LOG.info("Received start request");
         if (port == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(Map.of("error", "action-port header is required", "timestamp", Instant.now().toString()))
+                    .entity(mapper.writeValueAsString(
+                            Map.of("error", "action-port header is required", "timestamp", Instant.now().toString()))
+                    )
                     .build();
         }
 
         try {
-            processManager.startNode(port, peer, kafkaTopic, kafkaBroker);
+            processManager.startNode(address, port, peers, kafkaTopic, kafkaBroker, strategy);
 
-            return Response.ok(Map.of(
-                    "status", "Gossip Node Started",
-                    "nodeId", "Node-" + port,
-                    "timestamp", Instant.now().toString()
+            LOG.info("Process started successfully");
+
+            return Response.ok(
+                    mapper.writeValueAsString(
+                            Map.of(
+                        "status", "Gossip Node Started",
+                        "nodeId", "Node-" + port,
+                        "timestamp", Instant.now().toString()
+                        )
             )).build();
 
         } catch (IllegalStateException e) {
             return Response.status(Response.Status.CONFLICT)
-                    .entity(Map.of("error", e.getMessage(), "timestamp", Instant.now().toString()))
+                    .entity(mapper.writeValueAsString(
+                            Map.of("error", e.getMessage(), "timestamp", Instant.now().toString()))
+                    )
+                    .type(MediaType.APPLICATION_JSON)
                     .build();
         } catch (Exception e) {
+            LOG.error(e.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity(Map.of("status", "Error executing process", "error", e.getMessage(), "timestamp", Instant.now().toString()))
+                    .entity(mapper.writeValueAsString(
+                            Map.of("status", "Error executing process", "error", e.getMessage(), "timestamp", Instant.now().toString()))
+                    )
                     .build();
         }
     }

@@ -14,24 +14,33 @@ public class GossipProcessManager {
 
     private final Map<Integer, Process> activeNodes = new ConcurrentHashMap<>();
 
-    public void startNode(Integer port, String peer, String kafkaTopic, String kafkaBroker) throws Exception {
+    public void startNode(String address, Integer port, List<String> peers, String kafkaTopic, String kafkaBroker, String strategy) throws Exception {
         if (activeNodes.containsKey(port) && activeNodes.get(port).isAlive()) {
             throw new IllegalStateException("Node already running on port " + port);
         }
 
         String peerAddress = "";
-        if (peer != null && !peer.isBlank()) {
-            peerAddress = peer.contains(":") ? peer : "127.0.0.1:" + peer;
+        if (peers != null && !peers.isEmpty()) {
+            peerAddress = String.join(",", peers);;
         }
 
         List<String> command = new ArrayList<>();
         command.add("go");
         command.add("run");
-        command.add("main.go");
+        if(strategy.equalsIgnoreCase("push")) {
+            command.add("../node-scripts/push/main.go");
+        } else if(strategy.equalsIgnoreCase("pull")) {
+            command.add("../node-scripts/pull/main.go");
+        } else if(strategy.equalsIgnoreCase("pushpull")) {
+            command.add("../node-scripts/push-pull/main.go");
+        } else {
+            throw new Exception("Invalid strategy: " + strategy);
+        }
+//        command.add("main.go");
         command.add("-id");
         command.add("Node-" + port);
         command.add("-addr");
-        command.add("0.0.0.0:" + port);
+        command.add(address + ":" + port);
 
         if (!peerAddress.isEmpty()) {
             command.add("-peers");
@@ -45,6 +54,8 @@ public class GossipProcessManager {
                 command.add(kafkaTopic);
             }
         }
+
+        System.out.println("DEBUG: Raw peer string before ProcessBuilder: " + address);
 
         ProcessBuilder pb = new ProcessBuilder(command);
         // pb.directory(new File("/path/to/your/go/project"));
@@ -80,6 +91,8 @@ public class GossipProcessManager {
             Process process = entry.getValue();
             if (process != null && process.isAlive()) {
                 System.out.println("Killing Node on port: " + entry.getKey());
+                // 1. Kill all child processes (e.g., the actual compiled Go binary)
+                process.descendants().forEach(ProcessHandle::destroyForcibly);
                 process.destroyForcibly();
             }
         }
