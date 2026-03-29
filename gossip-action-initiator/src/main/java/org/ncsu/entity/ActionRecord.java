@@ -4,6 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class ActionRecord extends PanacheEntity {
@@ -11,8 +12,12 @@ public class ActionRecord extends PanacheEntity {
     String nodeAddress;
     Integer managerPort;
     Integer actionPort;
+    List<String> peers;
+    String kafkaBroker;
+    String topic;
     Integer status;
     LocalDateTime timestamp;
+    Strategy strategy;
     Action action;
 
     public ActionRecord() {}
@@ -22,12 +27,28 @@ public class ActionRecord extends PanacheEntity {
         this.managerPort = managerPort;
     }
 
-    public ActionRecord(String nodeAddress, Integer managerPort, Integer actionPort, Integer status, LocalDateTime timestamp, Action action) {
+    public ActionRecord(String nodeAddress, Integer managerPort, Integer actionPort, List<String> peers,
+                        Strategy strategy, String kafkaBroker, String topic) {
         this.nodeAddress = nodeAddress;
         this.managerPort = managerPort;
         this.actionPort = actionPort;
+        this.peers = peers;
+        this.strategy = strategy;
+        this.kafkaBroker = kafkaBroker;
+        this.topic = topic;
+    }
+
+    public ActionRecord(String nodeAddress, Integer managerPort, Integer actionPort, List<String> peers, String kafkaBroker,
+                        String topic, Integer status, LocalDateTime timestamp, Strategy strategy, Action action) {
+        this.nodeAddress = nodeAddress;
+        this.managerPort = managerPort;
+        this.actionPort = actionPort;
+        this.peers = peers;
+        this.kafkaBroker = kafkaBroker;
+        this.topic = topic;
         this.status = status;
         this.timestamp = timestamp;
+        this.strategy = strategy;
         this.action = action;
     }
 
@@ -76,5 +97,36 @@ public class ActionRecord extends PanacheEntity {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public List<String> getPeers() {
+        return peers;
+    }
+
+    public void setPeers(List<String> peers) {
+        this.peers = peers;
+    }
+
+    public String getKafkaBroker() {
+        return kafkaBroker;
+    }
+
+    public void setKafkaBroker(String kafkaBroker) {
+        this.kafkaBroker = kafkaBroker;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+    public Strategy getStrategy() {
+        return strategy;
+    }
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
     }
 }

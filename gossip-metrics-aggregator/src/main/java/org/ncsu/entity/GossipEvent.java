@@ -3,6 +3,7 @@ package org.ncsu.entity;
 public class GossipEvent {
 
     String nodeAddress;
+    String strategy;
     GossipDigest gossipDigest;
 
     public GossipEvent() {
@@ -19,6 +20,14 @@ public class GossipEvent {
 
     public void setNodeAddress(String nodeAddress) {
         this.nodeAddress = nodeAddress;
+    }
+
+    public String getStrategy() {
+        return strategy;
+    }
+
+    public void setStrategy(String strategy) {
+        this.strategy = strategy;
     }
 
     public GossipDigest getGossipDigest() {
